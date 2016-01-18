@@ -31,6 +31,11 @@ namespace KeePassQRCodeView
 			get { return Properties.Resources.icon; }
 		}
 
+		public override string UpdateUrl
+		{
+			get { return "https://github.com/KN4CK3R/KeePassQRCodeView/raw/master/keepass.version"; }
+		}
+
 		public override bool Initialize(IPluginHost host)
 		{
 			Contract.Requires(host != null);

@@ -18,6 +18,9 @@ namespace KeePassQRCodeView
 {
 	public class KeePassQRCodeViewExt : Plugin
 	{
+		private const string CONTEXT_MENU_ITEM_LABEL = "QR Code";
+		private const string INSERT_AFTER_ENTRY_KEY = "m_ctxEntrySaveAttachedFiles";
+
 		private IPluginHost host = null;
 
 		private ToolStripMenuItem ctxEntryShowQRCode;
@@ -25,10 +28,7 @@ namespace KeePassQRCodeView
 
 		public override Image SmallIcon
 		{
-			get
-			{
-				return Properties.Resources.icon;
-			}
+			get { return Properties.Resources.icon; }
 		}
 
 		public override bool Initialize(IPluginHost host)
@@ -40,12 +40,22 @@ namespace KeePassQRCodeView
 			ctxEntryShowQRCode = new ToolStripMenuItem
 			{
 				Image = Properties.Resources.icon,
-				Text = "QR Code"
+				Text = CONTEXT_MENU_ITEM_LABEL
 			};
 			dynQRCodes = new DynamicMenu(ctxEntryShowQRCode.DropDownItems);
 			dynQRCodes.MenuClick += OnShowQRCode;
 
-			host.MainWindow.EntryContextMenu.Items.Add(ctxEntryShowQRCode);
+			var insertAfterIndex = host.MainWindow.EntryContextMenu.Items.IndexOfKey(INSERT_AFTER_ENTRY_KEY);
+			if (insertAfterIndex != -1)
+			{
+				//insert after "Save Attachements"
+				host.MainWindow.EntryContextMenu.Items.Insert(insertAfterIndex + 1, ctxEntryShowQRCode);
+			}
+			else
+			{
+				//add at the end
+				host.MainWindow.EntryContextMenu.Items.Add(ctxEntryShowQRCode);
+			}
 			host.MainWindow.EntryContextMenu.Opening += OnEntryContextMenuOpening;
 
 			return true;

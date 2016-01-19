@@ -159,22 +159,19 @@ namespace KeePassQRCodeView
 
 			var value = pe.Strings.GetSafe(key).ReadString();
 
-			char scan, wanted;
-			pe = SprEngine.FindRefTarget(
-				value,
-				new SprContext(pe, host.Database, SprCompileFlags.All),
-				out scan,
-				out wanted
-			);
-			if (null != pe)
-			{
-				value = pe.Strings.GetSafe(key).ReadString();
-			}
+			value = SprEngine.Compile(value, new SprContext(pe, host.Database, SprCompileFlags.All));
 
-			var data = new QRCodeGenerator().CreateQrCode(value, QRCodeGenerator.ECCLevel.L);
-			if (data != null)
+			try
 			{
-				new ShowQRCodeForm(data.GetBitmap(10, Color.Black, Color.White)).ShowDialog();
+				var data = new QRCodeGenerator().CreateQrCode(value, QRCodeGenerator.ECCLevel.L);
+				if (data != null)
+				{
+					new ShowQRCodeForm(data.GetBitmap(10, Color.Black, Color.White)).ShowDialog();
+				}
+			}
+			catch
+			{
+				MessageBox.Show("The data can't be displayed as a QR Code.");
 			}
 		}
 	}

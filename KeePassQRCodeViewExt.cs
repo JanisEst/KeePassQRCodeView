@@ -105,7 +105,7 @@ namespace KeePassQRCodeView
 				}
 
 				items.Add(Tuple.Create(
-					StrUtil.EncodeMenuText(TryTranslate(kvp.Key)),
+					StrUtil.EncodeMenuText(TryTranslateKey(kvp.Key)),
 					kvp.Key
 				));
 			}
@@ -122,7 +122,44 @@ namespace KeePassQRCodeView
 			ctxEntryShowQRCode.Visible = true;
 		}
 
-		private string TryTranslate(string key)
+		public void OnShowQRCode(object sender, DynamicMenuEventArgs e)
+		{
+			var key = e.Tag as string;
+			if (key == null)
+			{
+				return;
+			}
+
+			var pe = host.MainWindow.GetSelectedEntry(true);
+			if (pe == null)
+			{
+				return;
+			}
+
+			var context = new SprContext(pe, host.Database, SprCompileFlags.All);
+			var value = SprEngine.Compile(pe.Strings.GetSafe(key).ReadString(), context);
+
+			try
+			{
+				var data = new QRCodeGenerator().CreateQrCode(value, QRCodeGenerator.ECCLevel.L);
+				if (data != null)
+				{
+					var form = new ShowQRCodeForm(
+						host,
+						data.GetBitmap(10, Color.Black, Color.White),
+						SprEngine.Compile(pe.Strings.GetSafe(PwDefs.TitleField).ReadString(), context),
+						TryTranslateKey(key)
+					);
+					form.ShowDialog();
+				}
+			}
+			catch
+			{
+				MessageBox.Show("The data can't be displayed as a QR Code.");
+			}
+		}
+
+		private string TryTranslateKey(string key)
 		{
 			Contract.Requires(key != null);
 
@@ -140,38 +177,6 @@ namespace KeePassQRCodeView
 					return KPRes.Notes;
 				default:
 					return key;
-			}
-		}
-
-		public void OnShowQRCode(object sender, DynamicMenuEventArgs e)
-		{
-			var key = e.Tag as string;
-			if (key == null)
-			{
-				return;
-			}
-
-			var pe = host.MainWindow.GetSelectedEntry(true);
-			if (pe == null)
-			{
-				return;
-			}
-
-			var value = pe.Strings.GetSafe(key).ReadString();
-
-			value = SprEngine.Compile(value, new SprContext(pe, host.Database, SprCompileFlags.All));
-
-			try
-			{
-				var data = new QRCodeGenerator().CreateQrCode(value, QRCodeGenerator.ECCLevel.L);
-				if (data != null)
-				{
-					new ShowQRCodeForm(data.GetBitmap(10, Color.Black, Color.White)).ShowDialog();
-				}
-			}
-			catch
-			{
-				MessageBox.Show("The data can't be displayed as a QR Code.");
 			}
 		}
 	}

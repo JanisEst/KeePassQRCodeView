@@ -28,23 +28,38 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.printButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
+			// 
+			// printButton
+			// 
+			this.printButton.Location = new System.Drawing.Point(0, 0);
+			this.printButton.Name = "printButton";
+			this.printButton.Size = new System.Drawing.Size(25, 25);
+			this.printButton.TabIndex = 0;
+			this.printButton.UseVisualStyleBackColor = true;
+			this.printButton.Click += new System.EventHandler(this.printButton_Click);
 			// 
 			// ShowQRCodeForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(284, 262);
-			this.Cursor = System.Windows.Forms.Cursors.Hand;
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.Controls.Add(this.printButton);
+			this.Cursor = System.Windows.Forms.Cursors.Default;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "ShowQRCodeForm";
+			this.ShowIcon = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "ShowQRCodeForm";
 			this.Click += new System.EventHandler(this.ShowQRCodeForm_Click);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button printButton;
 	}
 }

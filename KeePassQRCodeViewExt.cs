@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-
 using KeePass.Plugins;
 using KeePass.Resources;
 using KeePass.UI;
@@ -21,20 +20,14 @@ namespace KeePassQRCodeView
 		private const string CONTEXT_MENU_ITEM_LABEL = "QR Code";
 		private const string INSERT_AFTER_ENTRY_KEY = "m_ctxEntrySaveAttachedFiles";
 
-		private IPluginHost host = null;
+		private IPluginHost host;
 
 		private ToolStripMenuItem ctxEntryShowQRCode;
 		private DynamicMenu dynQRCodes;
 
-		public override Image SmallIcon
-		{
-			get { return Properties.Resources.icon; }
-		}
+		public override Image SmallIcon => Properties.Resources.icon;
 
-		public override string UpdateUrl
-		{
-			get { return "https://github.com/KN4CK3R/KeePassQRCodeView/raw/master/keepass.version"; }
-		}
+		public override string UpdateUrl => "https://github.com/KN4CK3R/KeePassQRCodeView/raw/master/keepass.version";
 
 		public override bool Initialize(IPluginHost host)
 		{

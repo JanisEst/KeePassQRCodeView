@@ -1,19 +1,22 @@
-﻿using KeePass.Plugins;
-using KeePassLib.Utility;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
+using KeePass.Plugins;
+using KeePassLib.Utility;
 
 namespace KeePassQRCodeView
 {
 	public partial class ShowQRCodeForm : Form
 	{
-		private Bitmap qrcode;
-		private string title;
-		private string field;
+		private const int ScreenPadding = 100;
+
+		private readonly Bitmap qrcode;
+		private readonly string title;
+		private readonly string field;
 
 		public ShowQRCodeForm(IPluginHost host, Bitmap qrcode, string title, string field)
 		{
@@ -29,7 +32,15 @@ namespace KeePassQRCodeView
 
 			Text = JoinIfNotEmpty(this.title, this.field);
 
-			ClientSize = new Size(qrcode.Width, qrcode.Height);
+			var screenBounds = Screen.GetBounds(this);
+			if (screenBounds.Width <= ScreenPadding || screenBounds.Height <= ScreenPadding)
+			{
+				screenBounds = new Rectangle(0, 0, 800, 800);
+			}
+			var maxSize = Math.Min(Math.Min(screenBounds.Width - ScreenPadding, screenBounds.Height - ScreenPadding), Math.Min(qrcode.Width, qrcode.Height));
+
+			ClientSize = new Size(maxSize, maxSize);
+			BackgroundImageLayout = ImageLayout.Stretch;
 			BackgroundImage = qrcode;
 
 			printButton.Image = host.Resources.GetObject("B16x16_FilePrint") as Image;
@@ -98,8 +109,10 @@ namespace KeePassQRCodeView
 				page.Graphics.DrawImage(qrcode, imageBounds);
 			};
 
-			var print = new PrintDialog();
-			print.Document = document;
+			var print = new PrintDialog
+			{
+				Document = document
+			};
 
 			if (print.ShowDialog() == DialogResult.OK)
 			{
@@ -114,7 +127,7 @@ namespace KeePassQRCodeView
 			}
 		}
 
-		private string JoinIfNotEmpty(params string[] param)
+		private static string JoinIfNotEmpty(params string[] param)
 		{
 			return string.Join(" - ", param.Where(s => !string.IsNullOrEmpty(s)));
 		}

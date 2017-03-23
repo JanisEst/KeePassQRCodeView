@@ -3,7 +3,7 @@ KeePassQRCodeView
 
 OVERVIEW
 -----
-KeePassQRCodeView is a plug-in for KeePass 2.x plugin which shows QR Codes for entry fields. These codes can be scanned to copy the encoded data to the scanner (smartphone, ...).
+KeePassQRCodeView is a plug-in for KeePass 2.x which shows QR Codes for entry fields. These codes can be scanned to copy the encoded data to the scanner (smartphone, ...).
 
 INSTALLATION
 -----

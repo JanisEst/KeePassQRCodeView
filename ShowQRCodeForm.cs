@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
@@ -44,6 +44,7 @@ namespace KeePassQRCodeView
 			BackgroundImage = qrcode;
 
 			printButton.Image = host.Resources.GetObject("B16x16_FilePrint") as Image;
+			saveButton.Image = host.Resources.GetObject("B16x16_FileSave") as Image;
 		}
 
 		private void ShowQRCodeForm_Click(object sender, EventArgs e)
@@ -109,20 +110,43 @@ namespace KeePassQRCodeView
 				page.Graphics.DrawImage(qrcode, imageBounds);
 			};
 
-			var print = new PrintDialog
+			using (var print = new PrintDialog
 			{
 				Document = document
-			};
-
-			if (print.ShowDialog() == DialogResult.OK)
+			})
 			{
-				try
+				if (print.ShowDialog() == DialogResult.OK)
 				{
-					document.Print();
+					try
+					{
+						document.Print();
+					}
+					catch (Exception ex)
+					{
+						MessageService.ShowWarning(ex);
+					}
 				}
-				catch (Exception ex)
+			}
+		}
+
+		private void saveButton_Click(object sender, EventArgs e)
+		{
+			using (var sfd = new SaveFileDialog
+			{
+				Filter = "JPG File (*.jpg)|*.jpg",
+				DefaultExt = "jpg"
+			})
+			{
+				if (sfd.ShowDialog() == DialogResult.OK)
 				{
-					MessageService.ShowWarning(ex);
+					try
+					{
+						BackgroundImage.Save(sfd.FileName, ImageFormat.Jpeg);
+					}
+					catch (Exception ex)
+					{
+						MessageService.ShowWarning(ex);
+					}
 				}
 			}
 		}

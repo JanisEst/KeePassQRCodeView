@@ -25,9 +25,9 @@ namespace KeePassQRCodeView
 		private ToolStripMenuItem ctxEntryShowQRCode;
 		private DynamicMenu dynQRCodes;
 
-		public override Image SmallIcon => Properties.Resources.icon;
+		public override Image SmallIcon { get { return Properties.Resources.icon; } }
 
-		public override string UpdateUrl => "https://github.com/KN4CK3R/KeePassQRCodeView/raw/master/keepass.version";
+		public override string UpdateUrl { get { return "https://github.com/KN4CK3R/KeePassQRCodeView/raw/master/keepass.version"; } }
 
 		public override bool Initialize(IPluginHost host)
 		{

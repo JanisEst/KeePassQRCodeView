@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using KeePass.Plugins;
 using KeePassLib.Utility;
@@ -12,6 +13,15 @@ namespace KeePassQRCodeView
 {
 	public partial class ShowQRCodeForm : Form
 	{
+		[StructLayout(LayoutKind.Sequential)]
+		public struct RECT
+		{
+			public int Left;
+			public int Top;
+			public int Right;
+			public int Bottom;
+		}
+
 		private const int ScreenPadding = 100;
 
 		private readonly Bitmap qrcode;
@@ -29,6 +39,8 @@ namespace KeePassQRCodeView
 			this.qrcode = qrcode;
 			this.title = title.Trim();
 			this.field = field.Trim();
+
+			DoubleBuffered = true;
 
 			Text = JoinIfNotEmpty(this.title, this.field);
 
@@ -149,6 +161,69 @@ namespace KeePassQRCodeView
 					}
 				}
 			}
+		}
+
+		protected override void WndProc(ref Message m)
+		{
+			const int WMSZ_LEFT = 1;
+			const int WMSZ_RIGHT = 2;
+			const int WMSZ_TOP = 3;
+			const int WMSZ_TOPLEFT = 4;
+			const int WMSZ_TOPRIGHT = 5;
+			const int WMSZ_BOTTOM = 6;
+			const int WMSZ_BOTTOMLEFT = 7;
+			const int WMSZ_BOTTOMRIGHT = 8;
+
+			if (m.Msg == 0x214 /*WM_MOVING || WM_SIZING*/)
+			{
+				var rc = (RECT)Marshal.PtrToStructure(m.LParam, typeof(RECT));
+				var w = rc.Right - rc.Left;
+				var h = rc.Bottom - rc.Top;
+				var z = w > h ? w : h;
+
+				switch ((int)m.WParam)
+				{
+					case WMSZ_LEFT:
+						rc.Bottom = rc.Top + w;
+						rc.Top = rc.Top + (h - (rc.Bottom - rc.Top)) / 2;
+						break;
+					case WMSZ_RIGHT:
+						rc.Bottom = rc.Top + w;
+						rc.Top = rc.Top + (h - (rc.Bottom - rc.Top)) / 2;
+						break;
+					case WMSZ_TOP:
+						rc.Right = rc.Left + h;
+						rc.Left = rc.Left + (w - (rc.Right - rc.Left)) / 2;
+						break;
+					case WMSZ_TOPLEFT:
+						rc.Top = rc.Bottom - z;
+						rc.Left = rc.Right - z;
+						break;
+					case WMSZ_TOPRIGHT:
+						rc.Top = rc.Bottom - z;
+						rc.Right = rc.Left + z;
+						break;
+					case WMSZ_BOTTOM:
+						rc.Right = rc.Left + h;
+						rc.Left = rc.Left + (w - (rc.Right - rc.Left)) / 2;
+						break;
+					case WMSZ_BOTTOMLEFT:
+						rc.Bottom = rc.Top + z;
+						rc.Left = rc.Right - z;
+						break;
+					case WMSZ_BOTTOMRIGHT:
+						rc.Bottom = rc.Top + z;
+						rc.Right = rc.Left + z;
+						break;
+				}
+
+				Marshal.StructureToPtr(rc, m.LParam, false);
+				m.Result = (IntPtr)1;
+
+				return;
+			}
+
+			base.WndProc(ref m);
 		}
 
 		private static string JoinIfNotEmpty(params string[] param)

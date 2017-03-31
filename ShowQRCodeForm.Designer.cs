@@ -58,9 +58,9 @@
 			this.Controls.Add(this.saveButton);
 			this.Controls.Add(this.printButton);
 			this.Cursor = System.Windows.Forms.Cursors.Default;
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(100, 100);
 			this.Name = "ShowQRCodeForm";
 			this.ShowIcon = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

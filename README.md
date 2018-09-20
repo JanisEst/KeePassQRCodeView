@@ -9,7 +9,7 @@ KeePassQRCodeView is a plug-in for KeePass 2.x which shows QR Codes for entry fi
 
 INSTALLATION
 -----
-- Download from https://github.com/KN4CK3R/KeePassQRCodeView/releases
+- Download from https://github.com/JanisEst/KeePassQRCodeView/releases
 - Extract the plug-in (KeePassQRCodeView.plgx) and place in the KeePass 
 program directory
 - Start KeePass and open a database

@@ -132,6 +132,13 @@ namespace KeePassQRCodeView
 			var context = new SprContext(pe, host.Database, SprCompileFlags.All);
 			var value = SprEngine.Compile(pe.Strings.GetSafe(key).ReadString(), context);
 
+			if (key == "otp" && value.StartsWith("key="))
+			{
+				var title = SprEngine.Compile(pe.Strings.GetSafe("Title").ReadString(), context);
+				title = Uri.EscapeDataString(title); 
+				value = $"otpauth://totp/{title}?secret={value.Replace("key=", "")}";
+			}
+			
 			try
 			{
 				var data = new QRCodeGenerator().CreateQrCode(value, QRCodeGenerator.ECCLevel.L);

@@ -9,22 +9,19 @@ namespace QRCoder
 {
 	public class QRCodeData
 	{
-		public int Version { get; private set; }
 		public List<BitArray> ModuleMatrix { get; set; }
 
 		public QRCodeData(int version)
 		{
-			Version = version;
-
 			var size = ModulesPerSideFromVersion(version);
 			ModuleMatrix = new List<BitArray>();
-			for (int i = 0; i < size; i++)
+			for (var i = 0; i < size; i++)
 			{
 				ModuleMatrix.Add(new BitArray(size));
 			}
 		}
 
-		private int ModulesPerSideFromVersion(int version)
+		private static int ModulesPerSideFromVersion(int version)
 		{
 			return 21 + (version - 1) * 4;
 		}
@@ -36,18 +33,18 @@ namespace QRCoder
 			var bmp = new Bitmap(size, size);
 			using (var g = Graphics.FromImage(bmp))
 			{
-				for (int x = 0; x < size; x = x + pixelsPerModule)
+				using (var darkBrush = new SolidBrush(darkColor))
 				{
-					for (int y = 0; y < size; y = y + pixelsPerModule)
+					using (var lightBrush = new SolidBrush(lightColor))
 					{
-						var module = ModuleMatrix[(y + pixelsPerModule) / pixelsPerModule - 1][(x + pixelsPerModule) / pixelsPerModule - 1];
-						if (module)
+						for (var x = 0; x < size; x += pixelsPerModule)
 						{
-							g.FillRectangle(new SolidBrush(darkColor), new Rectangle(x, y, pixelsPerModule, pixelsPerModule));
-						}
-						else
-						{
-							g.FillRectangle(new SolidBrush(lightColor), new Rectangle(x, y, pixelsPerModule, pixelsPerModule));
+							for (var y = 0; y < size; y += pixelsPerModule)
+							{
+								var module = ModuleMatrix[(y + pixelsPerModule) / pixelsPerModule - 1][(x + pixelsPerModule) / pixelsPerModule - 1];
+								var brush = module ? darkBrush : lightBrush;
+								g.FillRectangle(brush, new Rectangle(x, y, pixelsPerModule, pixelsPerModule));
+							}
 						}
 					}
 				}

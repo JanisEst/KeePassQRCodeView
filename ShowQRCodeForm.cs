@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -145,15 +146,23 @@ namespace KeePassQRCodeView
 		{
 			using (var sfd = new SaveFileDialog
 			{
-				Filter = "JPG File (*.jpg)|*.jpg",
+				Filter = "Images|*.jpg;*.png;*.gif;*.tiff;*.bmp",
 				DefaultExt = "jpg"
 			})
 			{
 				if (sfd.ShowDialog() == DialogResult.OK)
 				{
+					var format = ImageFormat.Jpeg;
+					switch (Path.GetExtension(sfd.FileName).ToLower())
+					{
+						case ".png": format = ImageFormat.Png; break;
+						case ".gif": format = ImageFormat.Gif; break;
+						case ".tiff": format = ImageFormat.Tiff; break;
+						case ".bmp": format = ImageFormat.Bmp; break;
+					}
 					try
 					{
-						BackgroundImage.Save(sfd.FileName, ImageFormat.Jpeg);
+						BackgroundImage.Save(sfd.FileName, format);
 					}
 					catch (Exception ex)
 					{

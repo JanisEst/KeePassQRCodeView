@@ -20,7 +20,11 @@ namespace KeePassQRCodeView
 		private const string CONTEXT_MENU_ITEM_LABEL = "QR Code";
 
 		private IPluginHost host;
-		
+
+		private ToolStripMenuItem menuItem;
+
+		private DynamicMenu dynamicMenu;
+
 		public override Image SmallIcon { get { return Properties.Resources.icon; } }
 
 		public override string UpdateUrl { get { return "https://github.com/JanisEst/KeePassQRCodeView/raw/master/keepass.version"; } }
@@ -31,39 +35,40 @@ namespace KeePassQRCodeView
 
 			this.host = host;
 
+			menuItem = new ToolStripMenuItem
+			{
+				Image = Properties.Resources.icon,
+				Text = CONTEXT_MENU_ITEM_LABEL
+			};
+
+			dynamicMenu = new DynamicMenu(menuItem.DropDownItems);
+			dynamicMenu.MenuClick += OnShowQRCode;
+
+			host.MainWindow.EntryContextMenu.Opening += OnEntryContextMenuOpening;
+
 			return true;
+		}
+
+		public override void Terminate()
+		{
+			host.MainWindow.EntryContextMenu.Opening -= OnEntryContextMenuOpening;
+
+			dynamicMenu.MenuClick -= OnShowQRCode;
 		}
 
 		public override ToolStripMenuItem GetMenuItem(PluginMenuType t)
 		{
 			if (t == PluginMenuType.Entry)
 			{
-				var item = new ToolStripMenuItem
-				{
-					Image = Properties.Resources.icon,
-					Text = CONTEXT_MENU_ITEM_LABEL
-				};
-				item.DropDownOpening += OnDropDownOpening;
-				item.DropDownItems.Add("dummy"); // Subitems get filled in OnDropDownOpening. The dummy item is necessary to show the "there is more" arrow.
-
-				var dynamicMenu = new DynamicMenu(item.DropDownItems);
-				dynamicMenu.MenuClick += OnShowQRCode;
-
-				item.Tag = dynamicMenu;
-
-				return item;
+				return menuItem;
 			}
 
 			return null;
 		}
 
-		private void OnDropDownOpening(object sender, EventArgs e)
+		private void OnEntryContextMenuOpening(object sender, CancelEventArgs e)
 		{
-			var item = (ToolStripMenuItem)sender;
-			var dynamicMenu = (DynamicMenu)item.Tag;
-
 			dynamicMenu.Clear();
-			item.DropDownItems.Clear();
 
 			if (!host.Database.IsOpen)
 			{

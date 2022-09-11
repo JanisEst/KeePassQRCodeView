@@ -56,16 +56,22 @@ namespace KeePassQRCodeView
 			BackgroundImageLayout = ImageLayout.Stretch;
 			BackgroundImage = qrcode;
 
-			printButton.Image = host.Resources.GetObject("B16x16_FilePrint") as Image;
-			saveButton.Image = host.Resources.GetObject("B16x16_FileSave") as Image;
+			printToolStripMenuItem.Image = host.Resources.GetObject("B16x16_FilePrint") as Image;
+			saveAsToolStripMenuItem.Image = host.Resources.GetObject("B16x16_FileSave") as Image;
 		}
 
 		private void ShowQRCodeForm_Click(object sender, EventArgs e)
 		{
+			var args = e as MouseEventArgs;
+			if (args == null || args.Button != MouseButtons.Left)
+			{
+				return;
+			}
+
 			Close();
 		}
 
-		private void printButton_Click(object sender, EventArgs e)
+		private void printToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			var document = new PrintDocument();
 			document.PrintPage += (s, page) =>
@@ -142,7 +148,7 @@ namespace KeePassQRCodeView
 			}
 		}
 
-		private void saveButton_Click(object sender, EventArgs e)
+		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (var sfd = new SaveFileDialog
 			{

@@ -28,35 +28,41 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.printButton = new System.Windows.Forms.Button();
-			this.saveButton = new System.Windows.Forms.Button();
+			this.components = new System.ComponentModel.Container();
+			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.contextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// printButton
+			// contextMenuStrip
 			// 
-			this.printButton.Location = new System.Drawing.Point(0, 0);
-			this.printButton.Name = "printButton";
-			this.printButton.Size = new System.Drawing.Size(25, 25);
-			this.printButton.TabIndex = 0;
-			this.printButton.UseVisualStyleBackColor = true;
-			this.printButton.Click += new System.EventHandler(this.printButton_Click);
+			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.printToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
+			this.contextMenuStrip.Name = "contextMenuStrip";
+			this.contextMenuStrip.Size = new System.Drawing.Size(124, 48);
 			// 
-			// saveButton
+			// printToolStripMenuItem
 			// 
-			this.saveButton.Location = new System.Drawing.Point(25, 0);
-			this.saveButton.Name = "saveButton";
-			this.saveButton.Size = new System.Drawing.Size(25, 25);
-			this.saveButton.TabIndex = 1;
-			this.saveButton.UseVisualStyleBackColor = true;
-			this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
+			this.printToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+			this.printToolStripMenuItem.Text = "Print";
+			this.printToolStripMenuItem.Click += new System.EventHandler(this.printToolStripMenuItem_Click);
+			// 
+			// saveAsToolStripMenuItem
+			// 
+			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+			this.saveAsToolStripMenuItem.Text = "Save As...";
+			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
 			// 
 			// ShowQRCodeForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(284, 262);
-			this.Controls.Add(this.saveButton);
-			this.Controls.Add(this.printButton);
+			this.ContextMenuStrip = this.contextMenuStrip;
 			this.Cursor = System.Windows.Forms.Cursors.Default;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -65,13 +71,14 @@
 			this.ShowIcon = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Click += new System.EventHandler(this.ShowQRCodeForm_Click);
+			this.contextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Button printButton;
-		private System.Windows.Forms.Button saveButton;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
 	}
 }
